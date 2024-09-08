@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSPD | Trabalho Final</title>
+</head>
+<body>
+    <button onclick="submitRequest()">send message</button>
+    <script>
+        const socket = new WebSocket('ws://localhost:5003');
+
+        socket.onopen = function(event) {
+            console.log('Conectado ao servidor WebSocket');
+        };
+
+        socket.onmessage = function(event) {
+            console.log('Mensagem recebida do servidor: ', event.data);
+        };
+
+        socket.onerror = function(error) {
+            console.error('Erro no WebSocket: ', error);
+        };
+
+        socket.onclose = function(event) {
+            console.log('Conexão com o servidor WebSocket fechada');
+        };
+
+        function submitRequest() { 
+            socket.send('Olá, servidor!');
+        }
+    </script>
+</body>
+</html>
