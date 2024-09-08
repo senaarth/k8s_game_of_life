@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jogodavida-omp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jogodavida-omp 
+  template:
+    metadata:
+      labels:
+        app: jogodavida-omp
+    spec:
+      containers:
+      - name: openmp-container
+        image: lcsandrade/jogodavida-omp
+        command: ["/app/jogo_da_vida_omp"]
