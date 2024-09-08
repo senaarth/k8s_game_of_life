@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jogodavida-mpi
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: jogodavida-mpi 
+  template:
+    metadata:
+      labels:
+        app: jogodavida-mpi
+    spec:
+      containers:
+        - name: mpi-container
+          image: lcsandrade/jogodavida-mpi
+          command: ["mpirun", "-np", "4", "/app/jogo_da_vida_mpi"]
