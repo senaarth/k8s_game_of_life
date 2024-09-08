@@ -3,10 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSPD | Trabalho Final</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {}
+            }
+          }
+        }
+      </script>
+    <title>Jogo da Vida</title>
 </head>
-<body>
-    <button onclick="submitRequest()">send message</button>
+<body class="bg-gray-900 flex flex-col items-center justify-center h-svh">
+    <div class="flex flex-col items-center justify-center w-full h-full">
+        <h1 class="text-3xl font-bold text-gray-50 text-center mb-1">
+            Jogo da Vida
+        </h1>
+        <h2 class="text-md font-light text-gray-500 text-center mb-5">
+            Preencha os valores para enviar ao servidor.
+        </h2>
+        <form id="form" class="max-w-lg mx-auto grid grid-cols-1 gap-5">
+            <div class="grid grid-cols-2 gap-5">
+                <div class="flex flex-col">
+                    <label for="powmin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Valor de POWMIN</label>
+                    <input id="powmin" type="number" name="powmin" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required min="1" value="3"/>
+                </div>
+                <div class="flex flex-col">
+                    <label for="powmax" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Valor de POWMAX</label>
+                    <input id="powmax" type="number" name="powmax" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required min="1" value="10"/>
+                </div>
+            </div>
+            <button id="form-submit" type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Enviar</button>
+        </form>
+    </div>
     <script>
         const socket = new WebSocket('ws://localhost:5003');
 
@@ -26,9 +57,25 @@
             console.log('Conexão com o servidor WebSocket fechada');
         };
 
-        function submitRequest() { 
-            socket.send('Olá, servidor!');
+        function submitRequest(powmin, powmax) { 
+            socket.send(JSON.stringify({ powmin, powmax }));
         }
+
+        const form = document.querySelector('#form');
+        const submitBtn = document.querySelector('#form-submit');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const data = {};
+            
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            submitRequest(data.powmin, data.powmax);
+        });
     </script>
 </body>
 </html>
