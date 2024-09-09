@@ -15,4 +15,6 @@ spec:
       containers:
       - name: openmp-container
         image: lcsandrade/jogodavida-omp
+        ports:
+        - containerPort: 6000
         command: ["/app/jogo_da_vida_omp"]
