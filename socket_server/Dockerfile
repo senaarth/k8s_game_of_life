@@ -6,8 +6,8 @@ COPY . /app
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 5001
-EXPOSE 5002/udp
-EXPOSE 5003
+EXPOSE 30001
+EXPOSE 30002/udp
+EXPOSE 30003
 
 CMD ["python", "-u", "main.py"]

@@ -7,7 +7,7 @@
 #include <omp.h> // Incluindo a biblioteca OpenMP
 
 #define BUFFER_SIZE 1024
-#define PORT 6000
+#define PORT 30005
 #define ind2d(i, j) (i) * (tam + 2) + j
 
 double wall_time(void)
@@ -86,7 +86,7 @@ int main()
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
 
-    // Ligando o socket à porta 6000
+    // Ligando o socket à porta 30005
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
     {
         perror("Falha ao fazer bind");

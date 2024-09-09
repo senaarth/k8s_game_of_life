@@ -4,11 +4,6 @@ import websockets
 import json
 from services import submit_values_to_engines
 
-OMP_HOST = 'jogodavida_omp'  # Kubernetes service name for OMP
-OMP_PORT = 6000
-MPI_HOST = 'jogodavida_mpi'  # Kubernetes service name for MPI
-MPI_PORT = 7000
-
 def handle_tcp_client(client_socket):
     while True:
         try:
@@ -32,9 +27,9 @@ def handle_tcp_client(client_socket):
 
 def tcp_server():
     tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcp_socket.bind(('0.0.0.0', 5001))
+    tcp_socket.bind(('0.0.0.0', 30001))
     tcp_socket.listen(5)
-    print("TCP Server Listening on port 5001")
+    print("TCP Server Listening on port 30001")
     
     while True:
         client_socket, addr = tcp_socket.accept()
@@ -43,8 +38,8 @@ def tcp_server():
 
 def udp_server():
     udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    udp_socket.bind(('0.0.0.0', 5002))
-    print("UDP Server Listening on port 5002")
+    udp_socket.bind(('0.0.0.0', 30002))
+    print("UDP Server Listening on port 30002")
     
     while True:
         try:
@@ -81,6 +76,6 @@ async def websocket_handler(websocket, path):
             await websocket.send("Erro no recebimento da requisição, tentar novamente.")
 
 async def websocket_server():
-    server = await websockets.serve(websocket_handler, "0.0.0.0", 5003)
-    print("WebSocket Server Listening on port 5003")
+    server = await websockets.serve(websocket_handler, "0.0.0.0", 30003)
+    print("WebSocket Server Listening on port 30003")
     await server.wait_closed()

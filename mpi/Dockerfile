@@ -11,5 +11,7 @@ COPY jogo_da_vida_mpi.c /app/jogo_da_vida_mpi.c
 
 RUN mpicc /app/jogo_da_vida_mpi.c -o /app/jogo_da_vida_mpi
 
+EXPOSE 30004
+
 CMD ["mpirun", "-np", "4", "/app/jogo_da_vida_mpi"]
  

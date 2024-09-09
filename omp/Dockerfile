@@ -11,6 +11,6 @@ COPY jogo_da_vida_omp.c /app/jogo_da_vida_omp.c
 
 RUN gcc -fopenmp /app/jogo_da_vida_omp.c -o /app/jogo_da_vida_omp
 
-EXPOSE 6000
+EXPOSE 30005
 
 CMD ["/app/jogo_da_vida_omp"]

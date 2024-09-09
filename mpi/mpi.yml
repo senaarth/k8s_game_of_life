@@ -14,5 +14,8 @@ spec:
     spec:
       containers:
         - name: mpi-container
-          image: lcsandrade/jogodavida-mpi
+          image: jogodavida-mpi
+          imagePullPolicy: Never
+          ports:
+          - containerPort: 30004
           command: ["mpirun", "-np", "4", "/app/jogo_da_vida_mpi"]

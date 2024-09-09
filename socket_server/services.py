@@ -2,17 +2,17 @@ import random
 import socket
 
 engine_hosts = {
-    "omp": {
-        "host": "jogodavida-omp",  # Nome do serviço OMP no Kubernetes ou Docker
-        "port": 6000,
-    },
     "mpi": {
         "host": "jogodavida-mpi",  # Nome do serviço MPI no Kubernetes ou Docker
-        "port": 7000,
+        "port": 30004,
+    },
+    "omp": {
+        "host": "jogodavida-omp",  # Nome do serviço OMP no Kubernetes ou Docker
+        "port": 30005,
     },
     "spark": {
         "host": "jogodavida-spark",  # Nome do serviço Spark no Kubernetes ou Docker
-        "port": 8000,
+        "port": 30006,
     },
 }
 

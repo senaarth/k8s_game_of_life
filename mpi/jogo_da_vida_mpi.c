@@ -1,152 +1,80 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
-#include <mpi.h>
+#include <string.h>
+#include <unistd.h>
+#include <arpa/inet.h>
 
-#define ind2d(i, j) ((i) * (tam + 2) + (j))
-#define POWMIN 3
-#define POWMAX 10
+#define PORT 6001
+#define BUFFER_SIZE 1024
 
-#define MASTER 0
-
-double wall_time(void)
+int main()
 {
-  struct timeval tv;
-  struct timezone tz;
+  int server_fd, new_socket;
+  struct sockaddr_in address;
+  int addrlen = sizeof(address);
+  char buffer[BUFFER_SIZE] = {0};
+  const char *confirmation_message = "Dados recebidos com sucesso!\n";
 
-  gettimeofday(&tv, &tz);
-  return (tv.tv_sec + tv.tv_usec / 1000000.0);
-}
-
-void UmaVida(int *tabulIn, int *tabulOut, int tam, int start, int end)
-{
-  int i, j, vizviv;
-
-  for (i = start; i <= end; i++)
+  // Criando o socket
+  if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
   {
-    for (j = 1; j <= tam; j++)
+    perror("Falha ao criar socket");
+    exit(EXIT_FAILURE);
+  }
+
+  // Definindo as opções de socket
+  address.sin_family = AF_INET;
+  address.sin_addr.s_addr = INADDR_ANY;
+  address.sin_port = htons(PORT);
+
+  // Ligando o socket à porta 600
+  if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
+  {
+    perror("Falha ao fazer bind");
+    exit(EXIT_FAILURE);
+  }
+
+  // Colocando o socket em modo de escuta
+  if (listen(server_fd, 3) < 0)
+  {
+    perror("Falha ao escutar");
+    exit(EXIT_FAILURE);
+  }
+
+  printf("Aguardando conexões na porta %d...\n", PORT);
+
+  while (1)
+  {
+    // Aceitando uma conexão
+    if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0)
     {
-      vizviv = tabulIn[ind2d(i - 1, j - 1)] + tabulIn[ind2d(i - 1, j)] +
-               tabulIn[ind2d(i - 1, j + 1)] + tabulIn[ind2d(i, j - 1)] +
-               tabulIn[ind2d(i, j + 1)] + tabulIn[ind2d(i + 1, j - 1)] +
-               tabulIn[ind2d(i + 1, j)] + tabulIn[ind2d(i + 1, j + 1)];
-      if (tabulIn[ind2d(i, j)] && vizviv < 2)
-        tabulOut[ind2d(i, j)] = 0;
-      else if (tabulIn[ind2d(i, j)] && vizviv > 3)
-        tabulOut[ind2d(i, j)] = 0;
-      else if (!tabulIn[ind2d(i, j)] && vizviv == 3)
-        tabulOut[ind2d(i, j)] = 1;
-      else
-        tabulOut[ind2d(i, j)] = tabulIn[ind2d(i, j)];
-    }
-  }
-}
-
-void DumpTabul(int *tabul, int tam, int first, int last, char *msg)
-{
-  int i, ij;
-
-  printf("%s; Dump posicoes [%d:%d, %d:%d] de tabuleiro %d x %d\n",
-         msg, first, last, first, last, tam, tam);
-  for (i = first; i <= last; i++)
-    printf("=");
-  printf("=\n");
-  for (i = ind2d(first, 0); i <= ind2d(last, 0); i += ind2d(1, 0))
-  {
-    for (ij = i + first; ij <= i + last; ij++)
-      printf("%c", tabul[ij] ? 'X' : '.');
-    printf("\n");
-  }
-  for (i = first; i <= last; i++)
-    printf("=");
-  printf("=\n");
-}
-
-void InitTabul(int *tabulIn, int *tabulOut, int tam)
-{
-  int ij;
-
-  for (ij = 0; ij < (tam + 2) * (tam + 2); ij++)
-  {
-    tabulIn[ij] = 0;
-    tabulOut[ij] = 0;
-  }
-
-  tabulIn[ind2d(1, 2)] = 1;
-  tabulIn[ind2d(2, 3)] = 1;
-  tabulIn[ind2d(3, 1)] = 1;
-  tabulIn[ind2d(3, 2)] = 1;
-  tabulIn[ind2d(3, 3)] = 1;
-}
-
-int Correto(int *tabul, int tam)
-{
-  int ij, cnt;
-
-  cnt = 0;
-  for (ij = 0; ij < (tam + 2) * (tam + 2); ij++)
-    cnt = cnt + tabul[ij];
-  return (cnt == 5 && tabul[ind2d(tam - 2, tam - 1)] &&
-          tabul[ind2d(tam - 1, tam)] && tabul[ind2d(tam, tam - 2)] &&
-          tabul[ind2d(tam, tam - 1)] && tabul[ind2d(tam, tam)]);
-}
-
-int main(int argc, char *argv[])
-{
-  int pow;
-  int i, tam, *tabulIn, *tabulOut;
-  char msg[9];
-  double t0, t1, t2, t3;
-
-  int rank, size;
-  MPI_Init(&argc, &argv);
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  MPI_Comm_size(MPI_COMM_WORLD, &size);
-
-  for (pow = POWMIN; pow <= POWMAX; pow++)
-  {
-    tam = 1 << pow;
-
-    t0 = wall_time();
-    tabulIn = (int *)malloc((tam + 2) * (tam + 2) * sizeof(int));
-    tabulOut = (int *)malloc((tam + 2) * (tam + 2) * sizeof(int));
-    InitTabul(tabulIn, tabulOut, tam);
-    t1 = wall_time();
-
-    int rows_per_proc = tam / size;
-    int start = rank * rows_per_proc + 1;
-    int end = (rank == size - 1) ? tam : start + rows_per_proc - 1;
-
-    for (i = 0; i < 2 * (tam - 3); i++)
-    {
-      UmaVida(tabulIn, tabulOut, tam, start, end);
-      MPI_Allgather(&tabulOut[ind2d(start, 0)], rows_per_proc * (tam + 2), MPI_INT,
-                    &tabulIn[ind2d(1, 0)], rows_per_proc * (tam + 2), MPI_INT,
-                    MPI_COMM_WORLD);
-      UmaVida(tabulIn, tabulOut, tam, start, end);
-      MPI_Allgather(&tabulOut[ind2d(start, 0)], rows_per_proc * (tam + 2), MPI_INT,
-                    &tabulIn[ind2d(1, 0)], rows_per_proc * (tam + 2), MPI_INT,
-                    MPI_COMM_WORLD);
+      perror("Falha ao aceitar conexão");
+      exit(EXIT_FAILURE);
     }
 
-    t2 = wall_time();
+    // Limpando o buffer
+    memset(buffer, 0, BUFFER_SIZE);
 
-    if (rank == MASTER)
+    // Recebendo o valor via TCP
+    int valread = read(new_socket, buffer, BUFFER_SIZE);
+    if (valread > 0)
     {
-      if (Correto(tabulIn, tam))
-        printf("**RESULTADO CORRETO**\n");
-      else
-        printf("**RESULTADO ERRADO**\n");
+      printf("Valor recebido: %s\n", buffer);
 
-      t3 = wall_time();
-      printf("tam=%d; tempos: init=%7.7f, comp=%7.7f, fim=%7.7f, tot=%7.7f \n",
-             tam, t1 - t0, t2 - t1, t3 - t2, t3 - t0);
+      // Enviar confirmação de recebimento ao cliente
+      write(new_socket, confirmation_message, strlen(confirmation_message));
+    }
+    else
+    {
+      printf("Conexão encerrada pelo cliente.\n");
     }
 
-    free(tabulIn);
-    free(tabulOut);
+    // Fechando o socket de cliente
+    close(new_socket);
   }
 
-  MPI_Finalize();
+  // Fechando o socket do servidor
+  close(server_fd);
+
   return 0;
 }

@@ -14,14 +14,15 @@ spec:
     spec:
       containers:
       - name: socket-server-container
-        image: senaarth/python-socket-server 
+        image: socket-server 
+        imagePullPolicy: Never
         ports:
-        - containerPort: 5001
-        - containerPort: 5002
+        - containerPort: 30001  # TCP
+        - containerPort: 30002  # UDP
           protocol: UDP
-        - containerPort: 5003
+        - containerPort: 30003  # WebSocket
         env:
-        - name: ENV_VAR_EXAMPLE  # Caso precise de variáveis de ambiente
+        - name: ENV_VAR_EXAMPLE
           value: "example"
         resources:
           requests:
@@ -32,6 +33,14 @@ spec:
             cpu: "500m"
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: udp-services
+  namespace: ingress-nginx
+data:
+  30002: "default/server-service:30002"  # Porta UDP mapeada para o serviço
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: server-service
@@ -39,16 +48,44 @@ spec:
   selector:
     app: socket-server
   ports:
-    - name: tcp-port-5001 
+    - name: tcp-port-30001  # Porta TCP
       protocol: TCP
-      port: 5001
-      targetPort: 5001
-    - name: udp-port-5002
+      port: 30001
+      targetPort: 30001
+      nodePort: 30001
+    - name: udp-port-30002  # Porta UDP
       protocol: UDP
-      port: 5002
-      targetPort: 5002
-    - name: tcp-port-5003
+      port: 30002
+      targetPort: 30002
+      nodePort: 30002
+    - name: websocket-port-30003  # Porta WebSocket
       protocol: TCP
-      port: 5003
-      targetPort: 5003
-  type: LoadBalancer  # local usar nodeport
+      port: 30003
+      targetPort: 30003
+      nodePort: 30003
+  type: NodePort
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: socket-server-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/websocket-services: "server-service"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /tcp  # Para TCP (porta 30001)
+        pathType: Prefix
+        backend:
+          service:
+            name: server-service
+            port:
+              number: 30001
+      - path: /ws  # Para WebSocket (porta 30003)
+        pathType: Prefix
+        backend:
+          service:
+            name: server-service
+            port:
+              number: 30003
