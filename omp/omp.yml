@@ -14,8 +14,22 @@ spec:
     spec:
       containers:
       - name: openmp-container
-        image: jogodavida-omp
-        imagePullPolicy: Never
+        image: gcr.io/massive-hub-431500-n1/jogodavida-omp
         ports:
         - containerPort: 30005
         command: ["/app/jogo_da_vida_omp"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jogodavida-omp
+spec:
+  selector:
+    app: jogodavida-omp
+  ports:
+    - name: tcp-port-30005  # Porta TCP
+      protocol: TCP
+      port: 30005
+      targetPort: 30005
+      nodePort: 30005
+  type: LoadBalancer

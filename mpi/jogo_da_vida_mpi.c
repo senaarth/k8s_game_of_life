@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-#define PORT 6001
+#define PORT 30004
 #define BUFFER_SIZE 1024
 
 int main()
@@ -13,7 +13,7 @@ int main()
   struct sockaddr_in address;
   int addrlen = sizeof(address);
   char buffer[BUFFER_SIZE] = {0};
-  const char *confirmation_message = "Dados recebidos com sucesso!\n";
+  const char *confirmation_message = "Dados recebidos pela engine MPI!\n";
 
   // Criando o socket
   if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)

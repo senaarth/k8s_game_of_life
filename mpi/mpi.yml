@@ -14,8 +14,22 @@ spec:
     spec:
       containers:
         - name: mpi-container
-          image: jogodavida-mpi
-          imagePullPolicy: Never
+          image: gcr.io/massive-hub-431500-n1/jogodavida-mpi
           ports:
           - containerPort: 30004
           command: ["mpirun", "-np", "4", "/app/jogo_da_vida_mpi"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jogodavida-mpi
+spec:
+  selector:
+    app: jogodavida-mpi
+  ports:
+    - name: tcp-port-30004  # Porta TCP
+      protocol: TCP
+      port: 30004
+      targetPort: 30004
+      nodePort: 30004
+  type: LoadBalancer
