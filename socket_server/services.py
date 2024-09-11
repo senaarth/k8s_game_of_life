@@ -17,7 +17,13 @@ engine_hosts = {
 }
 
 def submit_values_to_engines(powmin, powmax):
-    chosen_engine = random.choice(["omp", "mpi", "spark"])
+    chosen_engine = random.choice([
+        "omp", 
+        # todo consetar mpi
+        # "mpi", 
+        # todo adaptar spark para receber valores via tcp
+        # "spark"
+    ])
     engine_host = engine_hosts[chosen_engine]["host"]
     engine_port = engine_hosts[chosen_engine]["port"]
 
@@ -33,7 +39,7 @@ def submit_values_to_engines(powmin, powmax):
             response = s.recv(1024).decode()
 
             print(f"Received response from {chosen_engine}: {response}")
-            return response
+            return f"{chosen_engine} {response}"
     except Exception as e:
         print(f"Error connecting to {chosen_engine}: {e}")
         return f"Erro {e}"

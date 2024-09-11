@@ -12,7 +12,7 @@ def handle_tcp_client(client_socket):
             if ',' in data:
                 powmin, powmax = data.split(',')
             else:
-                client_socket.sendall(b"Erro: Formato de dados incorreto. Use 'POWMIN,POWMAX'.")
+                # client_socket.sendall(b"Erro: Formato de dados incorreto. Use 'POWMIN,POWMAX'.")
                 break
      
             response = submit_values_to_engines(powmin, powmax)
@@ -50,7 +50,7 @@ def udp_server():
             if ',' in decoded_data:
                 powmin, powmax = decoded_data.split(',')
             else:
-                udp_socket.sendto(b"Erro: Formato de dados incorreto. Use 'POWMIN,POWMAX'.", addr)
+                # udp_socket.sendto(b"Erro: Formato de dados incorreto. Use 'POWMIN,POWMAX'.", addr)
                 break
 
             response = submit_values_to_engines(powmin, powmax)

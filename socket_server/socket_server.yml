@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
       - name: socket-server-container
-        image: socket-server 
-        imagePullPolicy: Never
+        image: gcr.io/massive-hub-431500-n1/socket-server 
         ports:
         - containerPort: 30001  # TCP
         - containerPort: 30002  # UDP
@@ -38,13 +37,14 @@ metadata:
   name: udp-services
   namespace: ingress-nginx
 data:
-  30002: "default/server-service:30002"  # Porta UDP mapeada para o serviço
+  30002: "default/socket-server:30002"  # Porta UDP mapeada para o serviço
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: server-service
+  name: socket-server
 spec:
+  loadBalancerIP: 104.154.205.216 # IP estático reservado
   selector:
     app: socket-server
   ports:
@@ -53,39 +53,9 @@ spec:
       port: 30001
       targetPort: 30001
       nodePort: 30001
-    - name: udp-port-30002  # Porta UDP
-      protocol: UDP
-      port: 30002
-      targetPort: 30002
-      nodePort: 30002
     - name: websocket-port-30003  # Porta WebSocket
       protocol: TCP
       port: 30003
       targetPort: 30003
       nodePort: 30003
-  type: NodePort
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: socket-server-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/websocket-services: "server-service"
-spec:
-  rules:
-  - http:
-      paths:
-      - path: /tcp  # Para TCP (porta 30001)
-        pathType: Prefix
-        backend:
-          service:
-            name: server-service
-            port:
-              number: 30001
-      - path: /ws  # Para WebSocket (porta 30003)
-        pathType: Prefix
-        backend:
-          service:
-            name: server-service
-            port:
-              number: 30003
+  type: LoadBalancer
