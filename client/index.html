@@ -91,7 +91,8 @@
         </div>
     </div>
     <script>
-        const socket = new WebSocket('ws://localhost:30003/');
+        // ip estático reservado do socket server
+        const socket = new WebSocket('ws://104.154.205.216:30003');
         let isConnectedToServer = false;
 
         socket.onopen = function(event) {
@@ -100,8 +101,8 @@
         };
 
         socket.onmessage = function(event) {
-            console.log('Mensagem recebida do servidor: ', event.data);
-            showToast('warning', `Mensagem recebida do servidor: ${event.data}`);
+            console.log('Resposta do servidor: ', event.data);
+            showToast('warning', `Resposta do servidor: ${event.data}`);
         };
 
         socket.onerror = function(error) {

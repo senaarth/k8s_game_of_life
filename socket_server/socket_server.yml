@@ -15,6 +15,7 @@ spec:
       containers:
       - name: socket-server-container
         image: gcr.io/massive-hub-431500-n1/socket-server 
+        imagePullPolicy: Always
         ports:
         - containerPort: 30001  # TCP
         - containerPort: 30002  # UDP

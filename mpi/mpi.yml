@@ -15,6 +15,7 @@ spec:
       containers:
         - name: mpi-container
           image: gcr.io/massive-hub-431500-n1/jogodavida-mpi
+          imagePullPolicy: Always
           ports:
           - containerPort: 30004
           command: ["mpirun", "-np", "4", "/app/jogo_da_vida_mpi"]
