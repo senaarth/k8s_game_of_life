@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jogodavida-pyspark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jogodavida-pyspark
+  template:
+    metadata:
+      labels:
+        app: jogodavida-pyspark
+    spec:
+      containers:
+        - name: spark-container
+          image: gcr.io/massive-hub-431500-n1/jogodavida-pyspark
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 30007
+          resources: # Recursos de CPU e memória para o container
+            requests:
+              cpu: "300m"    # Requisição de 300 milicores, equivalente a 30% de 1 núcleo de CPU
+              memory: "128Mi"  # 128 MiB de memória
+            limits:
+              cpu: "300m"    # Limite de 300 milicores, equivalente a 30% de 1 núcleo de CPU
+              memory: "1024Mi"  # Limite de 1024Mi MiB de memória
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jogodavida-pyspark
+spec:
+  selector:
+    app: jogodavida-pyspark
+  ports:
+    - name: tcp-port-30007  # Porta TCP
+      protocol: TCP
+      port: 30007
+      targetPort: 30007
+      nodePort: 30007
+  type: LoadBalancer
