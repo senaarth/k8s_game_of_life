@@ -22,8 +22,8 @@ spec:
     memory: "512m"
     labels:
       version: 3.4.0
+      app: jogodavida-spark-driver
     serviceAccount: spark
-    podName: jogodavida-spark-driver
   executor:
     cores: 1
     instances: 2
