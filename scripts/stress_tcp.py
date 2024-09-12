@@ -20,7 +20,7 @@ def send_socket_message(ip, port, message, duration):
             break
 
 if __name__ == "__main__":
-    # exemplo de uso python stress.py 5 omp,3,5 10
+    # exemplo de uso python stress_tcp.py 5 omp,3,5 10
     threads_num = int(sys.argv[1])
     message = sys.argv[2]
     duration = int(sys.argv[3])  # Duração do teste em segundos

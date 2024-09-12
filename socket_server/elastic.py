@@ -1,8 +1,11 @@
 from elasticsearch import Elasticsearch
+
+# Pegar credencial antes de buildar
 # PASSWORD=$(kubectl get secret database-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode)
+# echo $PASSWORD
 es = Elasticsearch(
     "https://database-es-http:9200",
-    basic_auth=("elastic", "ID60n32o2Par4Gfx9CTOa623"),
+    basic_auth=("elastic", "vRE87kchp5352L72w35RUFxW"),
     verify_certs=False,
     ssl_show_warn=False,
 )

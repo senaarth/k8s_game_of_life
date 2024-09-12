@@ -1,7 +1,15 @@
 #!/bin/bash
 
 # Lista de pastas e as respectivas imagens Docker no Google Container Registry (GCR)
-folders=("mpi" "omp" "pyspark" "socket_server" "client" "database")
+folders=(
+    "mpi" 
+    "omp" 
+    "spark"
+    "pyspark" 
+    "socket_server" 
+    "client" 
+    "database"
+)
 
 # Função para deletar os YAMLs no Kubernetes
 delete_yml() {
@@ -24,7 +32,7 @@ delete_yml() {
 }
 
 # Vai pra raiz
-cd - || exit
+cd '../' || exit
 
 # Itera sobre os serviços e deleta os YAMLs
 for i in "${!folders[@]}"; do

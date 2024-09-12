@@ -1,10 +1,18 @@
 #!/bin/bash
 
 # Lista de pastas e as respectivas imagens Docker no Google Container Registry (GCR)
-services=("mpi" "omp" "pyspark" "socket_server" "client")
+services=(
+    # "mpi" # engine não funciona na arquitetura atual, porem para testar basta descomentar antes de buiildar
+    "omp" 
+    # "spark" # engine não funciona na arquitetura atual, porem para testar basta descomentar antes de buiildar
+    "pyspark" 
+    "socket_server" 
+    # "client"
+)
 images=(
-    "gcr.io/massive-hub-431500-n1/jogodavida-mpi:latest"
+    # "gcr.io/massive-hub-431500-n1/jogodavida-mpi:latest"
     "gcr.io/massive-hub-431500-n1/jogodavida-omp:latest"
+    # "gcr.io/massive-hub-431500-n1/jogodavida-spark:latest"
     "gcr.io/massive-hub-431500-n1/jogodavida-pyspark:latest"
     "gcr.io/massive-hub-431500-n1/socket-server:latest"
     "gcr.io/massive-hub-431500-n1/client:latest"
@@ -57,7 +65,7 @@ apply_yml_only() {
 }
 
 # Vai pra raiz
-cd - || exit
+cd '../' || exit
 
 # Aplicar apenas YAMLs do elastic search
 apply_yml_only "database"
