@@ -44,7 +44,9 @@ def submit_values_to_engines(powmin, powmax):
                 if not response:
                     break
 
-                for line in response.decode().split('\n'):
+                decoded_response = response.decode().strip()
+
+                for line in decoded_response.split('\n'):
                     if len(line) > 1:
                         print(f"Received response from {chosen_engine}: {line}")
                         all_responses.append(f"{chosen_engine} {line}")
