@@ -6,7 +6,7 @@ metadata:
 spec:
   type: Scala
   mode: cluster
-  image: lcsandrade/jogodavida-spark 
+  image: lcsandrade/jogodavida-spark
   imagePullPolicy: Always
   mainClass: JogoDaVidaSpark
   mainApplicationFile: "local:///opt/spark/jars/jogodavida.jar"
@@ -23,6 +23,7 @@ spec:
     labels:
       version: 3.4.0
     serviceAccount: spark
+    podName: jogodavida-spark-driver
   executor:
     cores: 1
     instances: 2
