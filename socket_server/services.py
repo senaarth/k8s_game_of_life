@@ -1,5 +1,6 @@
 import random
 import socket
+from elastic import send_metrics_to_elastic
 
 engine_hosts = {
     "mpi": {
@@ -48,6 +49,7 @@ def submit_values_to_engines(powmin, powmax):
 
                 for line in decoded_response.split('\n'):
                     if len(line) > 1:
+                        send_metrics_to_elastic(line, chosen_engine)
                         print(f"Received response from {chosen_engine}: {line}")
                         all_responses.append(f"{chosen_engine} {line}")
 

@@ -149,7 +149,7 @@ int main()
 
                 t3 = wall_time();
                 char result[BUFFER_SIZE];
-                snprintf(result, sizeof(result), "tam=%d; tempos: init=%7.7f, comp=%7.7f, fim=%7.7f, tot=%7.7f\n",
+                snprintf(result, sizeof(result), "tam=%d,init=%7.7f,comp=%7.7f,fim=%7.7f,tot=%7.7f\n",
                          tam, t1 - t0, t2 - t1, t3 - t2, t3 - t0);
 
                 // Enviando o resultado de volta ao cliente
