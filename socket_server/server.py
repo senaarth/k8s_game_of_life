@@ -15,9 +15,10 @@ def handle_tcp_client(client_socket):
                 # client_socket.sendall(b"Erro: Formato de dados incorreto. Use 'POWMIN,POWMAX'.")
                 break
      
-            response = submit_values_to_engines(powmin, powmax)
+            responses = submit_values_to_engines(powmin, powmax)
 
-            client_socket.sendall(response.encode())
+            for response in responses:
+                client_socket.sendall(response.encode())
         except Exception as e:
             print("TCP Error", e)
             client_socket.sendall(b"Erro na requisicao, tentar novamente.")
@@ -53,9 +54,10 @@ def udp_server():
                 # udp_socket.sendto(b"Erro: Formato de dados incorreto. Use 'POWMIN,POWMAX'.", addr)
                 break
 
-            response = submit_values_to_engines(powmin, powmax)
+            responses = submit_values_to_engines(powmin, powmax)
 
-            udp_socket.sendto(response.encode(), addr)
+            for response in responses:
+                udp_socket.sendto(response.encode(), addr)
         except Exception as e:
             print("UDP Error", e)
             udp_socket.sendto(b"Erro na requisicao, tentar novamente.", addr)
@@ -68,9 +70,10 @@ async def websocket_handler(websocket, path):
             powmin = data['powmin']
             powmax = data['powmax']
 
-            response = submit_values_to_engines(powmin, powmax)
+            responses = submit_values_to_engines(powmin, powmax)
 
-            await websocket.send(response)
+            for response in responses:
+                await websocket.send(response)            
         except Exception as e:
             print("WebSocket Error", e)
             await websocket.send("Erro no recebimento da requisição, tentar novamente.")

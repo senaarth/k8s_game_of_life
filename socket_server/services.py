@@ -32,14 +32,24 @@ def submit_values_to_engines(powmin, powmax):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((engine_host, engine_port))
-            
-            message = f"{powmin},{powmax}".encode()
+
+            message = f"{powmin} {powmax}".encode()
             s.sendall(message)
             
-            response = s.recv(1024).decode()
+            all_responses = []
 
-            print(f"Received response from {chosen_engine}: {response}")
-            return f"{chosen_engine} {response}"
+            while True:
+                response = s.recv(1024)
+
+                if not response:
+                    break
+
+                for line in response.decode().split('\n'):
+                    if len(line) > 1:
+                        print(f"Received response from {chosen_engine}: {line}")
+                        all_responses.append(f"{chosen_engine} {line}")
+
+            return all_responses
     except Exception as e:
         print(f"Error connecting to {chosen_engine}: {e}")
         return f"Erro {e}"
