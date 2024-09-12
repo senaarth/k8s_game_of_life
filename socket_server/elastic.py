@@ -1,8 +1,8 @@
 from elasticsearch import Elasticsearch
-
+# PASSWORD=$(kubectl get secret database-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode)
 es = Elasticsearch(
     "https://quickstart-es-http:9200",
-    basic_auth=("elastic", "945cZ19Jloa9ikUD3JX9V7H9"),
+    basic_auth=("elastic", "ID60n32o2Par4Gfx9CTOa623"),
     verify_certs=False,
     ssl_show_warn=False,
 )
@@ -19,5 +19,8 @@ def parse_metrics(metrics_string, engine):
     return parsed_metrics
 
 def send_metrics_to_elastic(metrics, engine):
-    parsed_metrics = parse_metrics(metrics, engine)
-    es.index(index="engines-perfomance-metrics", document=parsed_metrics)
+    try:
+        parsed_metrics = parse_metrics(metrics, engine)
+        es.index(index="engines-perfomance-metrics", document=parsed_metrics)
+    except Exception as e:
+        print(f"Erro no elasticsearch: {e}")

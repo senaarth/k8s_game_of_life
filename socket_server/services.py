@@ -12,19 +12,16 @@ engine_hosts = {
         "port": 30005,
     },
     "spark": {
-        "host": "jogodavida-spark",  # Nome do serviço Spark no Kubernetes ou Docker
+        "host": "jogodavida-spark-driver-service",  # Nome do serviço Spark no Kubernetes ou Docker
         "port": 30006,
+    },
+    "pyspark": {
+        "host": "jogodavida-pyspark",  # Nome do serviço Spark em Python no Kubernetes ou Docker
+        "port": 30007,
     },
 }
 
-def submit_values_to_engines(powmin, powmax):
-    chosen_engine = random.choice([
-        "omp", 
-        # todo consetar mpi
-        # "mpi", 
-        # todo adaptar spark para receber valores via tcp
-        # "spark"
-    ])
+def submit_values_to_engines(chosen_engine, powmin, powmax):
     engine_host = engine_hosts[chosen_engine]["host"]
     engine_port = engine_hosts[chosen_engine]["port"]
 

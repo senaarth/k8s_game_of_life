@@ -40,6 +40,13 @@
                     <input id="powmax" type="number" name="powmax" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required min="1" value="1"/>
                 </div>
             </div>
+            <div class="flex flex-col">
+                <label for="engine" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Escolha a Engine</label>
+                <select id="engine" name="engine" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="omp">OpenMP</option>
+                    <option value="spark">Apache Spark</option>
+                </select>
+            </div>
             <button id="form-submit" type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Enviar</button>
         </form>
 
@@ -115,8 +122,8 @@
             showToast('warning', 'Conexão com o servidor WebSocket fechada.');
         };
 
-        function submitRequest(powmin, powmax) { 
-            socket.send(JSON.stringify({ powmin, powmax }));
+        function submitRequest(engine, powmin, powmax) { 
+            socket.send(JSON.stringify({ engine, powmin, powmax }));
         }
 
         const form = document.querySelector('#form');
@@ -139,7 +146,7 @@
             });
 
             try {
-                submitRequest(data.powmin, data.powmax);
+                submitRequest(data.engine, data.powmin, data.powmax);
                 showToast('success', 'Mensagem enviada ao servidor com sucesso.');
             } catch (error) {
                 console.log(error);

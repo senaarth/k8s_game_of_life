@@ -10,12 +10,12 @@ def handle_tcp_client(client_socket):
             data = client_socket.recv(1024).decode()
 
             if ',' in data:
-                powmin, powmax = data.split(',')
+                engine, powmin, powmax = data.split(',')
             else:
                 # client_socket.sendall(b"Erro: Formato de dados incorreto. Use 'POWMIN,POWMAX'.")
                 break
      
-            responses = submit_values_to_engines(powmin, powmax)
+            responses = submit_values_to_engines(engine, powmin, powmax)
 
             for response in responses:
                 client_socket.sendall(response.encode())
@@ -49,12 +49,12 @@ def udp_server():
             decoded_data = data.decode()
 
             if ',' in decoded_data:
-                powmin, powmax = decoded_data.split(',')
+                engine, powmin, powmax = decoded_data.split(',')
             else:
                 # udp_socket.sendto(b"Erro: Formato de dados incorreto. Use 'POWMIN,POWMAX'.", addr)
                 break
 
-            responses = submit_values_to_engines(powmin, powmax)
+            responses = submit_values_to_engines(engine, powmin, powmax)
 
             for response in responses:
                 udp_socket.sendto(response.encode(), addr)
@@ -67,10 +67,11 @@ async def websocket_handler(websocket, path):
         try:
             data = json.loads(message)
 
+            engine = data['engine']
             powmin = data['powmin']
             powmax = data['powmax']
 
-            responses = submit_values_to_engines(powmin, powmax)
+            responses = submit_values_to_engines(engine, powmin, powmax)
 
             for response in responses:
                 await websocket.send(response)            

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: jogodavida-omp
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: jogodavida-omp 
@@ -13,12 +13,19 @@ spec:
         app: jogodavida-omp
     spec:
       containers:
-      - name: openmp-container
-        image: gcr.io/massive-hub-431500-n1/jogodavida-omp
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 30005
-        command: ["/app/jogo_da_vida_omp"]
+        - name: openmp-container
+          image: gcr.io/massive-hub-431500-n1/jogodavida-omp
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 30005
+          command: ["/app/jogo_da_vida_omp"]
+          resources: # Recursos de CPU e memória para o container
+            requests:
+              cpu: "300m"    # Requisição de 300 milicores, equivalente a 30% de 1 núcleo de CPU
+              memory: "128Mi"  # 128 MiB de memória
+            limits:
+              cpu: "300m"    # Limite de 300 milicores, equivalente a 30% de 1 núcleo de CPU
+              memory: "1024Mi"  # Limite de 1024Mi MiB de memória
 ---
 apiVersion: v1
 kind: Service
