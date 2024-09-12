@@ -1,7 +1,7 @@
 from elasticsearch import Elasticsearch
 # PASSWORD=$(kubectl get secret database-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode)
 es = Elasticsearch(
-    "https://quickstart-es-http:9200",
+    "https://database-es-http:9200",
     basic_auth=("elastic", "ID60n32o2Par4Gfx9CTOa623"),
     verify_certs=False,
     ssl_show_warn=False,
